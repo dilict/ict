@@ -1,103 +1,149 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh lpR fFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          icon="menu"
-          aria-label="Menu"
-        />
-
         <q-toolbar-title>
-          Quasar App
+          <q-btn stretch class="app-name" flat size="0.9em" :label="appName" to="/" />
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <div v-if="!loginStatus">
+          <q-btn class='desk-nav-items' stretch flat v-for="(item,index) in navbaritems" :key="index" :label="item.label" :to="item.to" />
+          <q-btn class='mob-nav-items' icon="fas fa-bars">
+            <q-menu transition-show="flip-right" transition-hide="flip-left">
+              <q-list style="min-width: 100px">
+                <q-item clickable v-close-popup v-for="(item,index) in navbaritems" :key="index">
+                  <q-item-section>
+                    <q-btn stretch flat :label="item.label" :to="item.to" color="primary" />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </div>
+        <div v-else>
+          <q-btn stretch flat label="Dashboard" to="/dashboard" />
+          <q-btn stretch flat label="LogOut" @click="logout()" />
+        </div>
+        <!--<CartButton />-->
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class="bg-grey-2"
-    >
-      <q-list>
-        <q-item-label header>Essential Links</q-item-label>
-        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="school" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Docs</q-item-label>
-            <q-item-label caption>quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://github.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="code" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Github</q-item-label>
-            <q-item-label caption>github.com/quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://chat.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="chat" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Discord Chat Channel</q-item-label>
-            <q-item-label caption>chat.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://forum.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="record_voice_over" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Forum</q-item-label>
-            <q-item-label caption>forum.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://twitter.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="rss_feed" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Twitter</q-item-label>
-            <q-item-label caption>@quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://facebook.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="public" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Facebook</q-item-label>
-            <q-item-label caption>@QuasarFramework</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-drawer>
-
+    <q-footer reveal :reveal-offset="10" elevated class="bg-white text-primary text-center text-body2">
+      All Rights Reserved - {{ appName }}
+    </q-footer>
     <q-page-container>
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
-
 <script>
-export default {
-  name: 'MyLayout',
+import BackToTop from 'vue-backtotop'
+import CartButton from '../components/CartButton.vue'
+import
+{
+  mapGetters,
+}
+from 'vuex'
+import
+{
+  firebaseAuth
+}
+from 'boot/firebase'
+import
+{
+  LocalStorage,
+  Notify,
+}
+from 'quasar'
 
-  data () {
+export default
+{
+  components:
+  {
+    BackToTop,
+    CartButton
+  },
+  mounted()
+  {
+    this.appName = process.env.APP_NAME;
+  },
+  data()
+  {
     return {
-      leftDrawerOpen: false
+      appName: null,
+      loginStatus: false,
+      navbaritems: [
+        {
+          label: 'Home',
+          to: '/',
+          icon: ''
+        },
+        {
+          label: 'Products',
+          to: '/products',
+          icon: ''
+        },
+
+        {
+          label: 'About',
+          to: '/about',
+          icon: ''
+        },
+        {
+          label: 'Contact',
+          to: '/contact',
+          icon: ''
+        },
+        {
+          label: 'Login',
+          to: '/login',
+          icon: ''
+        },
+        {
+          label: 'Register',
+          to: '/register',
+          icon: ''
+        },
+
+
+      ]
+    }
+  },
+  created()
+  {
+    this.initCheckLogin();
+  },
+  methods:
+  {
+    initCheckLogin: function()
+    {
+
+      let x = this.$store.dispatch('global/checkUserState');
+      this.storageUser = LocalStorage.getItem('STORAGEUSER');
+      console.log(this.storageUser)
+
+      if (this.storageUser == false)
+      {
+        this.loginStatus = false;
+      }
+      else
+      {
+        this.loginStatus = true;
+      }
+    },
+    logout()
+    {
+      LocalStorage.remove('STORAGEUSER');
+      firebaseAuth
+        .signOut()
+        .then(() =>
+        {
+
+          this.$router.replace(
+          {
+            name: "Login"
+          });
+        });
     }
   }
-}
+};
+
 </script>
