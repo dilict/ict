@@ -2,6 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueImg from 'v-img';
 
+
 import
 {
   Notify
@@ -24,7 +25,7 @@ const vueImgConfig = {
   altAsTitle: true,
   // Display 'download' button near 'close' that opens source image in new tab
   sourceButton: false,
-  // Event listener to open gallery will be applied to <img> element
+  // Event listener to open gallery will be applied to <img> element. Add anything on the comment.
   openOn: 'click',
   // Show thumbnails for all groups with more than 1 image
   thumbnails: true,
