@@ -4,7 +4,7 @@
 			Why Us
 		</div>
 		<div class=" text-center text-grey text-body1">
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+			DentalWarehouse is one stop shop for all the dental institutes across Australia where we provide all kinds of dental products and tools used by medical dental professionals. 
 		</div>
 		<div class="row justify-center q-gutter-md">
 			<div class="col-md-3 col-sm-12 col-xs-12 mtt-70" v-for="(service,index) in services" :key="index">
@@ -14,7 +14,7 @@
 						<q-card-section class="services-card-section w-100" style="">
 							<div class="col text-center ">
 								<q-icon class="service-icon text-center" :name="service.icon" />
-								<div class="text-body1">Description {{index+1}}</div>
+								<div class="text-body1"> {{service.desc}}</div>
 							</div>
 						</q-card-section>
 					</div>
@@ -34,27 +34,32 @@ export default {
 			{
 				title: 'Key/Consultancy for setting up complete plants ',
 				icon: 'fas fa-handshake',
-				to: ''
+				to: '',
+				desc: 'abc'
 			},
 			{
 				title: 'Melting and casting plants for copper and copper alloys',
 				icon: 'fas fa-hard-hat',
-				to: ''
+				to: '',
+				desc: 'b'
 			},
 			{
 				title: 'Non Ferrous Rolling Plants',
 				icon: 'fas fa-toolbox',
-				to: ''
+				to: '',
+				desc: 'c'
 			},
 			{
 				title: 'Extrusion plants for copper & copper alloy product',
 				icon: 'fas fa-hammer',
-				to: ''
+				to: '',
+				desc: 'd'
 			},
 			{
 				title: 'Engineering Services',
 				icon: 'fas fa-tools',
-				to: ''
+				to: '',
+				desc: 'e'
 			}, ],
 		}
 	}
